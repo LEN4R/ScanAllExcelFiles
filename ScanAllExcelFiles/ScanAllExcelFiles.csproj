@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Иконка -->
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+
+    <!-- Метаданные -->
+    <AssemblyTitle>ScanAllExcelFiles</AssemblyTitle>
+    <Product>Scan All Excel Files</Product>
+    <Company>GL</Company>
+    <Authors>Galiev Lenar</Authors>
+    <Description>Утилита для сканирования папок на наличие Excel файлов и сбора данных из выбранных ячеек.</Description>
+    <Version>1.2.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0 Release</InformationalVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+  
+  <ItemGroup>
+  <PackageReference Include="ClosedXML" Version="0.102.2" />
+</ItemGroup>
+
+</Project>
