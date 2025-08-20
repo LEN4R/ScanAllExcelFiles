@@ -24,7 +24,7 @@ class Program
         }
 
         // 2. Лист
-        Console.Write("Введите название листа (например: лист 1): ");
+        Console.Write("Введите название листа (оставьте пустым для сканирования всех листов): ");
         string sheetNameLine = Console.ReadLine()?.Trim() ?? "";
 
         // 3. Ячейки
@@ -42,7 +42,7 @@ class Program
 
         // 4. Заголовки
         var results = new List<List<string>>();
-        var header = new List<string> { "Файл (относительный путь)", "Имя файла" };
+        var header = new List<string> { "Файл (относительный путь)", "Имя файла", "Имя листа" };
         header.AddRange(targetCells);
         results.Add(header);
 
@@ -58,14 +58,25 @@ class Program
             {
                 using (var workbook = new XLWorkbook(file))
                 {
-                    var ws = workbook.Worksheets.FirstOrDefault(s => s.Name == sheetNameLine);
+                    List<IXLWorksheet> sheetsToScan;
 
-                    if (ws != null)
+                    if (string.IsNullOrEmpty(sheetNameLine))
+                    {
+                        // Пользователь не ввёл название → сканируем все листы
+                        sheetsToScan = workbook.Worksheets.ToList();
+                    }
+                    else
+                    {
+                        var ws = workbook.Worksheets.FirstOrDefault(s => s.Name.Equals(sheetNameLine, StringComparison.OrdinalIgnoreCase));
+                        sheetsToScan = ws != null ? new List<IXLWorksheet> { ws } : new List<IXLWorksheet>();
+                    }
+
+                    foreach (var ws in sheetsToScan)
                     {
                         string relativePath = Path.GetRelativePath(rootFolder, file);
                         string fileNameOnly = Path.GetFileNameWithoutExtension(file);
 
-                        var row = new List<string> { relativePath, fileNameOnly };
+                        var row = new List<string> { relativePath, fileNameOnly, ws.Name };
 
                         foreach (var cell in targetCells)
                         {
@@ -108,9 +119,9 @@ class Program
             workbook.SaveAs(resultFilePath);
         }
 
-        Console.WriteLine($"\n\n✅ Готово! Все данные собраны в: {resultFilePath}");
+        Console.WriteLine($"\n\n Готово! Все данные собраны в: {resultFilePath}");
         Console.WriteLine("Нажмите любую клавишу для выхода...");
-        Console.WriteLine("\n\n (с) Galiev Lenar");
+        Console.WriteLine("\n\n (с) Галиев Ленар \n https://github.com/LEN4R/ScanAllExcelFiles");
         Console.ReadKey();
     }
 
