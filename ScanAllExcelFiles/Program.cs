@@ -54,9 +54,18 @@ class Program
         foreach (var file in excelFiles)
         {
             current++;
+
+            // Пропуск временных файлов Excel (~$...)
+            if (Path.GetFileName(file).StartsWith("~$"))
+            {
+                DrawProgressBar(current, total);
+                continue;
+            }
+
             try
             {
-                using (var workbook = new XLWorkbook(file))
+                using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var workbook = new XLWorkbook(stream))
                 {
                     List<IXLWorksheet> sheetsToScan;
 
@@ -67,8 +76,17 @@ class Program
                     }
                     else
                     {
-                        var ws = workbook.Worksheets.FirstOrDefault(s => s.Name.Equals(sheetNameLine, StringComparison.OrdinalIgnoreCase));
-                        sheetsToScan = ws != null ? new List<IXLWorksheet> { ws } : new List<IXLWorksheet>();
+                        var ws = workbook.Worksheets.FirstOrDefault(
+                            s => s.Name.Equals(sheetNameLine, StringComparison.OrdinalIgnoreCase));
+
+                        if (ws == null)
+                        {
+                            Console.WriteLine($"\nПропуск {file}: лист '{sheetNameLine}' не найден.");
+                            DrawProgressBar(current, total);
+                            continue;
+                        }
+
+                        sheetsToScan = new List<IXLWorksheet> { ws };
                     }
 
                     foreach (var ws in sheetsToScan)
@@ -80,7 +98,15 @@ class Program
 
                         foreach (var cell in targetCells)
                         {
-                            string value = ws.Cell(cell).GetValue<string>();
+                            string value;
+                            try
+                            {
+                                value = ws.Cell(cell).GetFormattedString();
+                            }
+                            catch
+                            {
+                                value = "";
+                            }
                             row.Add(value);
                         }
 

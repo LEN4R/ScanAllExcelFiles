@@ -15,7 +15,7 @@
     <Company>LEN4R</Company>
     <Authors>Galiev Lenar</Authors>
     <Description>Утилита для сканирования папок на наличие Excel файлов и сбора данных из выбранных ячеек.</Description>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
