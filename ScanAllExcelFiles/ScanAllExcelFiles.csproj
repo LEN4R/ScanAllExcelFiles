@@ -24,6 +24,7 @@
   
   <ItemGroup>
   <PackageReference Include="ClosedXML" Version="0.102.2" />
+  <PackageReference Include="ExcelDataReader" Version="3.7.0" />
 </ItemGroup>
 
 </Project>
